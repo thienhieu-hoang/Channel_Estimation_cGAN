@@ -39,9 +39,9 @@ params.OFDM_sampling_factor = 1;   % The constructed channels will be calculated
 params.OFDM_limit           = params.num_OFDM;                % Only the first params.OFDM_limit subcarriers will be considered when constructing the channels
 
 % Number of paths
-params.num_paths=10;                  % Maximum number of paths to be considered (a value between 1 and 25), e.g., choose 1 if you are only interested in the strongest path
+params.num_paths  = 10;                  % Maximum number of paths to be considered (a value between 1 and 25), e.g., choose 1 if you are only interested in the strongest path
 
-params.saveDataset=0;
+params.saveDataset = 0;
  
 % -------------------------- Dataset Generation -----------------%
 [DeepMIMO_dataset,params]=DeepMIMO_generator(params); % Get H (i.e.,DeepMIMO_dataset )
@@ -60,9 +60,9 @@ Y_noise  = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,pilot_l);
 Y_sign   = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,pilot_l,2);
 
 for i = 1:length(DeepMIMO_dataset{1}.user)
-channels(i,:,:) = normalize(DeepMIMO_dataset{1}.user{i}.channel,'scale');%%
-Y(i,:,:) = DeepMIMO_dataset{1}.user{i}.channel*pilot_user;
-Y_noise(i,:,:) = awgn(Y(i,:,:),snr,'measured'); 
+    channels(i,:,:) = normalize(DeepMIMO_dataset{1}.user{i}.channel,'scale');%%
+           Y(i,:,:) = DeepMIMO_dataset{1}.user{i}.channel*pilot_user;
+     Y_noise(i,:,:) = awgn(Y(i,:,:),snr,'measured'); 
 end
 
 
@@ -75,8 +75,8 @@ channels_r(:,:,:,1) = real(channels); % real part of H
 channels_r(:,:,:,2) = imag(channels); % imag part of H
 
 % Shuffle data 
-shuff = randi([1,length(DeepMIMO_dataset{1}.user)],length(DeepMIMO_dataset{1}.user),1);
-Y_sign = Y_sign(shuff,:,:,:);
+shuff      = randi([1,length(DeepMIMO_dataset{1}.user)],length(DeepMIMO_dataset{1}.user),1);
+Y_sign     = Y_sign(shuff,:,:,:);
 channels_r = channels_r(shuff,:,:,:);
 
 
@@ -102,7 +102,7 @@ imshow(squeeze(output_da(1,:,:,1)))
 title('Visualization of H')
 
 %% Save data
-save(['Gan_Data/Gan_',num2str(snr),'_dB',filename],'input_da','output_da','input_da_test','output_da_test','-v7.3');
+% save(['Gan_Data/Gan_',num2str(snr),'_dB',filename],'input_da','output_da','input_da_test','output_da_test','-v7.3');
 
 
 

@@ -31,7 +31,7 @@ load(file_scenario_params)
 
 params.num_BS = num_BS;
 
-num_rows = max(min(user_grids(:,2), params.active_user_last) - max(user_grids(:,1),params.active_user_first)+1,0);
+num_rows = max(min(user_grids(:,2),params.active_user_last)-max(user_grids(:,1),params.active_user_first)+1,0);
 params.num_user=sum(num_rows.*user_grids(:,3));                     % total number of users
  
 current_grid=min(find(max(params.active_user_first,user_grids(:,2))==user_grids(:,2)));
