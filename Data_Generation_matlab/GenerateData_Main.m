@@ -18,8 +18,8 @@ params.scenario='I1_2p4';                % The adopted ray tracing scenarios [ch
 params.active_BS=32;          % Includes the numbers of the active BSs (values from 1-18 for 'O1')
 
 % Active users
-params.active_user_first =  1;       % The first row of the considered receivers section (check the scenario description for the receiver row map)
-params.active_user_last  = 11;        % The last row of the considered receivers section (check the scenario description for the receiver row map)
+params.active_user_first =  1;  % The first row of the considered receivers section (check the scenario description for the receiver row map)
+params.active_user_last  = 11;  % The last  row of the considered receivers section (check the scenario description for the receiver row map)
 
 % Number of BS Antenna 
 params.num_ant_x = 1;                  % Number of the UPA antenna array on the x-axis 
