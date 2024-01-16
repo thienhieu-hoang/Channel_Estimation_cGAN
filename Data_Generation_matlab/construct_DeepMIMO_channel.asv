@@ -16,19 +16,15 @@ Ts       = 1/BW;
 
 Mx_Ind  = 0:1:num_ant_x-1; % 1 x num_ant_x (1x 1)
 My_Ind  = 0:1:num_ant_y-1; % 1 x num_ant_y (1x64) 
-Mz_Ind  = 0:1:num_ant_z-1; % 1 x num_ant_z (1x 1)
-Mxx_Ind = repmat(Mx_Ind,1,num_ant_y*num_ant_z)'; 
-    % 64 x 1 = [1 x num_ant_x*num_ant_y*num_ant_z]'
-    %        = [num_ant_x*num_ant_y*num_ant_z x 1] 
+Mz_Ind  = 0:1:num_ant_z-1; % 1 x num_ant_x (1x 1)
+Mxx_Ind = repmat(Mx_Ind,1,num_ant_y*num_ant_z)'; % 64 x 1 = num_ant_x*num_ant_y*num_ant_z x 1 = [1 x num_ant_x*num_ant_y*num_ant_z]'
 Myy_Ind = repmat(reshape(repmat(My_Ind,num_ant_x,1),1,num_ant_x*num_ant_y),1,num_ant_z)';
     % 64 x 1 = repmat(reshape([num_ant_x x num_ant_y], 1, num_ant_x*num_ant_y), 1, num_ant_z)'
     %        = repmat([1 x num_ant_x*num_ant_y], 1, num_ant_z)'
     %        = [1 x num_ant_x*num_ant_y*num_ant_z]'
-    %        = [num_ant_x*num_ant_y*num_ant_z x 1]
+    %        = num_ant_x*num_ant_y*num_ant_z x 1
 Mzz_Ind = reshape(repmat(Mz_Ind,num_ant_x*num_ant_y,1),1,num_ant_x*num_ant_y*num_ant_z)';
-    % 64 x 1 = reshape([num_ant_x*num_ant_y x num_ant_z],1,num_ant_x*num_ant_y*num_ant_z)'
-    %        = [1 x num_ant_x*num_ant_y*num_ant_z]'
-    %        = [num_ant_x*num_ant_y*num_ant_z x 1]'
+    % 64 x 1 = reshape(repmat(Mz_Ind,num_ant_x*num_ant_y,1),1,num_ant_x*num_ant_y*num_ant_z)'
 M       = num_ant_x*num_ant_y*num_ant_z; 
 
 k = 0:output_subcarrier_downsampling_factor:output_subcarrier_limit-1;

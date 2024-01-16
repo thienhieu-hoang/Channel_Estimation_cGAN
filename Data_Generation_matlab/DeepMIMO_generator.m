@@ -55,7 +55,7 @@ fprintf([reverseStr, msg]);
 reverseStr = repmat(sprintf('\b'), 1, length(msg));
     
 for t=1:1:params.num_BS
-    if sum(t == params.active_BS) ==1
+    if sum(t == params.active_BS) ==1  % if t == active_BS (=32)
         filename_DoD=strcat('./RayTracing Scenarios/',params.scenario,'/',params.scenario,'.',int2str(t),'.DoD.mat');
         filename_CIR=strcat('./RayTracing Scenarios/',params.scenario,'/',params.scenario,'.',int2str(t),'.CIR.mat');
         filename_Loc=strcat('./RayTracing Scenarios/',params.scenario,'/',params.scenario,'.Loc.mat');
@@ -68,12 +68,25 @@ for t=1:1:params.num_BS
         reverseStr = repmat(sprintf('\b'), 1, length(msg));
     end
 end
+    % TX = 1 x params.active_BS cell (== 1x 32 cell)
+    %   TX{t}  = []
+    %   TX{32} = 1x1 struct
+    %       TX{32}.channel_params == 1 x 2211 (number of UEs) struct 
+    %           with fields:
+    %               DoD_phi
+    %               DoD_theta
+    %               phase
+    %               ToA
+    %               power
+    %               num_paths
+    %               loc
+    %           TX{32}.channel_params(1) == 1x1 struct
 
 
 % Constructing the channel matrices 
 TX_count=0;
-for t=1:1:params.num_BS
-    if sum(t == params.active_BS) ==1
+for t=1:1:params.num_BS % 1:64
+    if sum(t == params.active_BS) ==1   % if t == active_BS (=32)
         fprintf('\n Constructing the DeepMIMO Dataset for BS %d', t)
         reverseStr=0;
         percentDone = 0;

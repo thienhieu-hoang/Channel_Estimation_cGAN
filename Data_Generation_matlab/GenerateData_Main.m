@@ -45,6 +45,16 @@ params.saveDataset = 0;
  
 % -------------------------- Dataset Generation -----------------%
 [DeepMIMO_dataset, params] = DeepMIMO_generator(params); % Get H (i.e.,DeepMIMO_dataset )
+    % Output: 
+    %   DeepMIMO_dataset == 1x1 cell
+    %       DeepMIMO_dataset{1,1} == 1x1 struct 
+    %           DeepMIMO_dataset{1,1}.user == 1x2211 cell (total number of UEs = 2211)
+    %               each cell: DeepMIMO_dataset{1,1}.user{1,1} == 1x1 struct, with attributes: 
+    %                   DeepMIMO_dataset{1,1}.user{1,1}.channel == 64x32 complex double
+    %                   DeepMIMO_dataset{1,1}.user{1,1}.loc     == 1x3 double
+    %   params : add 2 attributes: 
+    %       params.num_BS   (=64)
+    %       params.num_user (=2211)
 
 
 %% Generate Pilots 

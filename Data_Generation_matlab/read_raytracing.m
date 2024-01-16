@@ -4,6 +4,17 @@
 % Goal: Encouraging research on ML/DL for mmWave MIMO applications and
 % providing a benchmarking tool for the developed algorithms
 % ---------------------------------------------------------------------- %
+
+% Output:
+%   channel_params == 1 x 2211 (number of UEs) struct 
+%           with fields:
+%               DoD_phi
+%               DoD_theta
+%               phase
+%               ToA
+%               power
+%               num_paths
+%               loc
 function [channel_params]=read_raytracing(filename_DoD,filename_CIR,filename_Loc,num_paths,user_first,user_last)
  
 DoD_array=importdata(filename_DoD);
@@ -48,5 +59,6 @@ for Receiver_Number=1:total_num_users
 end 
 
 channel_params=channel_params_all(1,user_first:user_last);
+% just get channel parameters of the considering UEs
 
 end
