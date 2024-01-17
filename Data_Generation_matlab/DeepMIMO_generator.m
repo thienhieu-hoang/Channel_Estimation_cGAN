@@ -73,10 +73,10 @@ end
     %   TX{32} = 1x1 struct
     %       TX{32}.channel_params == 1 x 2211 (number of UEs) struct 
     %           with fields:
-    %               DoD_phi
-    %               DoD_theta
+    %               DoD_phi: AoD from BS
+    %               DoD_theta: AoA at the UE
     %               phase
-    %               ToA
+    %               ToA: delay
     %               power
     %               num_paths
     %               loc
@@ -94,10 +94,13 @@ for t=1:1:params.num_BS % 1:64
         fprintf([reverseStr, msg]);
         reverseStr = repmat(sprintf('\b'), 1, length(msg));
         TX_count=TX_count+1;
-        for user=1:1:params.num_user         
-          [DeepMIMO_dataset{TX_count}.user{user}.channel]=construct_DeepMIMO_channel(TX{t}.channel_params(user),params.num_ant_x,params.num_ant_y,params.num_ant_z, ...
+        for user=1:1:params.num_user     
+          % construct channel
+          [DeepMIMO_dataset{TX_count}.user{user}.channel] = construct_DeepMIMO_channel(TX{t}.channel_params(user),params.num_ant_x,params.num_ant_y,params.num_ant_z, ...
               BW,params.num_OFDM,params.OFDM_sampling_factor,params.OFDM_limit,params.ant_spacing);
-          DeepMIMO_dataset{TX_count}.user{user}.loc=TX{t}.channel_params(user).loc;
+
+          % get UE locations
+          DeepMIMO_dataset{TX_count}.user{user}.loc = TX{t}.channel_params(user).loc;
           
           percentDone = 100* round(user / params.num_user,2);
           msg = sprintf('- Percent done: %3.1f', round(percentDone,2)); %Don't forget this semicolon

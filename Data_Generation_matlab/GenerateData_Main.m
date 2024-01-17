@@ -1,8 +1,8 @@
 clear all;close all;clc
 
 %% Settings 
-bs_ant= 64; % M= 64 BS Antennas
-users = 32; % K= 32 Users
+bs_ant= 16; % M= 64 BS Antennas
+users = 1; % K= 32 Users
 pilot_l = 8; % Pilots length is 8
 snr  = 0; % SNR = 0 dB
 
