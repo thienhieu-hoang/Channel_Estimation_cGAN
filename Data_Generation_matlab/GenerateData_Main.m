@@ -41,7 +41,7 @@ params.OFDM_limit           = params.num_OFDM;                % Only the first p
 % Number of paths
 params.num_paths  = 10;                  % Maximum number of paths to be considered (a value between 1 and 25), e.g., choose 1 if you are only interested in the strongest path
 
-params.saveDataset = 0;
+params.saveDataset = 1;
  
 % -------------------------- Dataset Generation -----------------%
 [DeepMIMO_dataset, params] = DeepMIMO_generator(params); % Get H (i.e.,DeepMIMO_dataset )
