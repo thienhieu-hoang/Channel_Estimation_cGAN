@@ -4,6 +4,8 @@ addpath('DeepMIMO_functions')
 % -------------------- DeepMIMO Dataset Generation -----------------------%
 % Load Dataset Parameters
 dataset_params = read_params('parameters.m');
+% run parameters.m
+
 [DeepMIMO_dataset, dataset_params] = DeepMIMO_generator(dataset_params);
     % DeepMIMO_dataset == 1x1 cell 
     %   DeepMIMO_dataset{1} == 1x1 struct, with 

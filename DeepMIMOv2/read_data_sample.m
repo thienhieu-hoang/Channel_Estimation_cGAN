@@ -1,22 +1,18 @@
-% not done
-addpath("DeepMIMO_functions\")
-
-filename_DoD=strcat('./RayTracing Scenarios/I1_2p4/I1_2p4','.',int2str(55),'.DoD.mat');
-filename_CIR=strcat('./RayTracing Scenarios/I1_2p4/I1_2p4','.',int2str(55),'.CIR.mat');
-filename_Loc=strcat('./RayTracing Scenarios/I1_2p4/I1_2p4','.Loc.mat');
-
-[a]=read_raytracing(filename_DoD,filename_CIR,filename_Loc,1,1,1000); 
-
+% run DeepMIMO_Dataset_Generator.m
 figure;
 % 3-D
-for i = 1:length(a)
-    plot3(a(i).loc(1), a(i).loc(2), a(i).loc(3), '.');
+for i = 1:length(DeepMIMO_dataset{1}.user)
+    plot3(DeepMIMO_dataset{1}.user{i}.loc(1), DeepMIMO_dataset{1}.user{i}.loc(2), DeepMIMO_dataset{1}.user{i}.loc(3), '.');
+    hold on
+end
+for i = 1:length(DeepMIMO_dataset{1}.basestation)
+    plot3(DeepMIMO_dataset{1}.basestation{i}.loc(1), DeepMIMO_dataset{1}.basestation{i}.loc(2), DeepMIMO_dataset{1}.basestation{i}.loc(3), '*');
     hold on
 end
 
 figure
 % 2-D
-for i = 1:length(a)
-    plot(a(i).loc(1), a(i).loc(2), '.');
+for i = 1:length(DeepMIMO_dataset{1}.user)
+    plot(DeepMIMO_dataset{1}.user{i}.loc(1), DeepMIMO_dataset{1}.user{i}.loc(2), '.');
     hold on
 end
