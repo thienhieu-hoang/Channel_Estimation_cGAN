@@ -1,3 +1,4 @@
+% not done
 addpath("DeepMIMO_functions\")
 
 filename_DoD=strcat('./RayTracing Scenarios/I1_2p4/I1_2p4','.',int2str(55),'.DoD.mat');

@@ -19,14 +19,14 @@ dataset_params = read_params('parameters.m');
     %               pathloss == real
     %               path_params == 1x1 struct, with
     %                   DoD_phi   == 1x5 vector
-    %                   DoD_theta == 1x5 vector
-    %                   DoA_phi   == 1x5 vector
-    %                   DoA_theta == 1x5 vector
-    %                   phase     == 1x5 vector
-    %                   ToA       == 1x5 vector
-    %                   power     == 1x5 vector
-    %                   num_paths == real
-    %                   LoS_status== real
+    %                   DoD_theta
+    %                   DoA_phi
+    %                   DoA_theta
+    %                   phase
+    %                   ToA
+    %                   power
+    %                   num_paths
+    %                   LoS_status
     %       basestation == 1x1 cell
     %           DeepMIMO_dataset{1}.basestation{1} == 1x1 struct, with
     %               channel  == 32x32x64 complex matrix
@@ -36,16 +36,17 @@ dataset_params = read_params('parameters.m');
     %               distance == real
     %               pathloss == real
     %               path_params == 1x1 struct, with
-    %                   DoD_phi     == 1x5 vector
-    %                   DoD_theta   == 1x5 vector
-    %                   DoA_phi     == 1x5 vector
-    %                   DoA_theta   == 1x5 vector
-    %                   phase       == 1x5 vector
-    %                   ToA         == 1x5 vector
-    %                   power       == 1x5 vector
-    %                   num_paths   == real
-    %                   LoS_status  == real
+    %                   DoD_phi
+    %                   DoD_theta
+    %                   DoA_phi
+    %                   DoA_theta
+    %                   phase
+    %                   ToA
+    %                   power
+    %                   num_paths
+    %                   LoS_status
 
+a=0;
 % -------------------------- Output Examples -----------------------------%
 % DeepMIMO_dataset{i}.user{j}.channel % Channel between BS i - User j
 % %  (# of User antennas) x (# of BS antennas) x (# of OFDM subcarriers)
