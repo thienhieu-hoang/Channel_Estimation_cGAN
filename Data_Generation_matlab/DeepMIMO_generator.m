@@ -6,12 +6,12 @@
 % ---------------------------------------------------------------------- %
 
 % Output: 
-%   DeepMIMO_dataset == 1x1 cell
-%       DeepMIMO_dataset{1,1} == 1x1 struct 
-%           DeepMIMO_dataset{1,1}.user == 1x2211 cell (total number of UEs = 2211)
-%               each cell: DeepMIMO_dataset{1,1}.user{1,1} == 1x1 struct, with attributes: 
-%                   DeepMIMO_dataset{1,1}.user{1,1}.channel == 64x32 complex double
-%                   DeepMIMO_dataset{1,1}.user{1,1}.loc     == 1x3 double
+%   DeepMIMO_dataset == 1x1 cell == 1 x (number of active BS)
+%       DeepMIMO_dataset{1} == 1x1 struct 
+%           DeepMIMO_dataset{1}.user == 1x2211 cell (total number of UEs = 2211)
+%               each cell: DeepMIMO_dataset{1}.user{1} == 1x1 struct, with attributes: 
+%                   DeepMIMO_dataset{1}.user{1}.channel == 64x32 complex double
+%                   DeepMIMO_dataset{1}.user{1}.loc     == 1x3 double
 %   params : add 2 attributes: 
 %       params.num_BS   (=64)
 %       params.num_user (=2211)
@@ -55,7 +55,7 @@ fprintf([reverseStr, msg]);
 reverseStr = repmat(sprintf('\b'), 1, length(msg));
     
 for t=1:1:params.num_BS
-    if sum(t == params.active_BS) ==1  % if t == active_BS (=32)
+    if sum(t == params.active_BS) ==1  % if t == active_BS (=32) (BS no 32, not 32 BSs)
         filename_DoD=strcat('./RayTracing Scenarios/',params.scenario,'/',params.scenario,'.',int2str(t),'.DoD.mat');
         filename_CIR=strcat('./RayTracing Scenarios/',params.scenario,'/',params.scenario,'.',int2str(t),'.CIR.mat');
         filename_Loc=strcat('./RayTracing Scenarios/',params.scenario,'/',params.scenario,'.Loc.mat');
@@ -69,7 +69,7 @@ for t=1:1:params.num_BS
     end
 end
     % TX = 1 x params.active_BS cell (== 1x 32 cell)
-    %   TX{t}  = []
+    %   TX{t}  = [], except t=32
     %   TX{32} = 1x1 struct
     %       TX{32}.channel_params == 1 x 2211 (number of UEs) struct 
     %           with fields:
@@ -86,7 +86,7 @@ end
 % Constructing the channel matrices 
 TX_count=0;
 for t=1:1:params.num_BS % 1:64
-    if sum(t == params.active_BS) ==1   % if t == active_BS (=32)
+    if sum(t == params.active_BS) ==1   % if t == active_BS (=32) (BS no 32, not 32 BSs)
         fprintf('\n Constructing the DeepMIMO Dataset for BS %d', t)
         reverseStr=0;
         percentDone = 0;
