@@ -9,11 +9,11 @@ params.scene_first = 1;
 params.scene_last = 1;
 
 % Active base stations
-params.active_BS = [1];             % Includes the numbers of the active BSs (values from 1-18 for 'O1')(check the scenario description at https://deepmimo.net/scenarios/ for the BS numbers) 
+params.active_BS = [3];             % Includes the numbers of the active BSs (values from 1-18 for 'O1')(check the scenario description at https://deepmimo.net/scenarios/ for the BS numbers) 
 
 % Active users
-params.active_user_first = 1;       % The first row of the considered user section (check the scenario description for the user row map)
-params.active_user_last = 1;        % The last row of the considered user section (check the scenario description for the user row map)
+params.active_user_first = 555;       % The first row of the considered user section (check the scenario description for the user row map)
+params.active_user_last  = 555;        % The last row of the considered user section (check the scenario description for the user row map)
 
 % Subsampling of active users
 %--> Setting both subsampling parameters to 1 activate all the users indicated previously
@@ -28,7 +28,7 @@ params.num_ant_BS = [1, 8, 4];      % Number of antenna elements for the BS arra
 % x-z UPA for the second BS, you write  
 % params.num_ant_BS = [[1, 8, 4]; [1, 4, 4]];
 
-params.num_ant_UE = [1, 4, 2];      % Number of antenna elements for the user arrays in the x,y,z-axes
+params.num_ant_UE = [1, 1, 1];      % Number of antenna elements for the user arrays in the x,y,z-axes
 
 % Antenna array orientations
 params.activate_array_rotation = 0; % 0 -> no array rotation - 1 -> apply the array rotation defined in params.array_rotation_BS and params.array_rotation_UE
@@ -72,4 +72,4 @@ params.num_OFDM = 512;                % Number of OFDM subcarriers
 params.OFDM_sampling_factor = 1;      % The constructed channels will be calculated only at the sampled subcarriers (to reduce the size of the dataset)
 params.OFDM_limit = 64;               % Only the first params.OFDM_limit subcarriers will be considered  
 
-params.saveDataset = 0;               % 0: Will return the dataset without saving it (highly recommended!) 
+params.saveDataset = 1;               % 0: Will return the dataset without saving it (highly recommended!) 
