@@ -59,58 +59,58 @@ params.saveDataset = 1;
 
 
 %% Generate Pilots 
-% pilot = uniformPilotsGen(pilot_l);
-% pilot = pilot{1,1};
-% pilot_user = repmat(pilot,[1 subs])';
-% 
-% 
-% %% Genrate Quantized Siganl Y with Noise
-% channels = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,subs);
-% Y        = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,pilot_l);
-% Y_noise  = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,pilot_l);
-% Y_sign   = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,pilot_l,2);
-% 
-% for i = 1:length(DeepMIMO_dataset{1}.user)
-%     channels(i,:,:) = normalize(DeepMIMO_dataset{1}.user{i}.channel,'scale');%%
-%            Y(i,:,:) = DeepMIMO_dataset{1}.user{i}.channel*pilot_user;
-%      Y_noise(i,:,:) = awgn(Y(i,:,:),snr,'measured'); 
-% end
-% 
-% 
-% %% Convert complex data to two-channel data
-% Y_sign(:,:,:,1) = sign(real(Y_noise)); % real part of Y
-% Y_sign(:,:,:,2) = sign(imag(Y_noise)); % imag papt of Y
-% 
-% 
-% channels_r(:,:,:,1) = real(channels); % real part of H
-% channels_r(:,:,:,2) = imag(channels); % imag part of H
-% 
-% % Shuffle data 
-% shuff      = randi([1,length(DeepMIMO_dataset{1}.user)],length(DeepMIMO_dataset{1}.user),1);
-% Y_sign     = Y_sign(shuff,:,:,:);
-% channels_r = channels_r(shuff,:,:,:);
-% 
-% 
-% %% Split data for training
-% numOfSamples = length(DeepMIMO_dataset{1}.user);
-% trRatio = 0.7;
-% numTrSamples = floor( trRatio*numOfSamples);
-% numValSamples = numOfSamples - numTrSamples;
-% 
-% input_da = Y_sign(1:numTrSamples,:,:,:);
-% output_da = channels_r(1:numTrSamples,:,:,:);
-% 
-% input_da_test = Y_sign(numTrSamples+1:end,:,:,:);
-% output_da_test = channels_r(numTrSamples+1:end,:,:,:);
-% 
-% 
-% %% Visualization of Y and H
-% figure
-% imshow(squeeze(input_da(1,:,:,1)))
-% title('Visualization of Y')
-% figure
-% imshow(squeeze(output_da(1,:,:,1)))
-% title('Visualization of H')
+pilot = uniformPilotsGen(pilot_l);
+pilot = pilot{1,1};
+pilot_user = repmat(pilot,[1 subs])';
+
+
+%% Genrate Quantized Siganl Y with Noise
+channels = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,subs);
+Y        = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,pilot_l);
+Y_noise  = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,pilot_l);
+Y_sign   = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,pilot_l,2);
+
+for i = 1:length(DeepMIMO_dataset{1}.user)
+    channels(i,:,:) = normalize(DeepMIMO_dataset{1}.user{i}.channel,'scale');%%
+           Y(i,:,:) = DeepMIMO_dataset{1}.user{i}.channel*pilot_user;
+     Y_noise(i,:,:) = awgn(Y(i,:,:),snr,'measured'); 
+end
+
+
+%% Convert complex data to two-channel data
+Y_sign(:,:,:,1) = sign(real(Y_noise)); % real part of Y
+Y_sign(:,:,:,2) = sign(imag(Y_noise)); % imag papt of Y
+
+
+channels_r(:,:,:,1) = real(channels); % real part of H
+channels_r(:,:,:,2) = imag(channels); % imag part of H
+
+% Shuffle data 
+shuff      = randi([1,length(DeepMIMO_dataset{1}.user)],length(DeepMIMO_dataset{1}.user),1);
+Y_sign     = Y_sign(shuff,:,:,:);
+channels_r = channels_r(shuff,:,:,:);
+
+
+%% Split data for training
+numOfSamples = length(DeepMIMO_dataset{1}.user);
+trRatio = 0.7;
+numTrSamples = floor( trRatio*numOfSamples);
+numValSamples = numOfSamples - numTrSamples;
+
+input_da = Y_sign(1:numTrSamples,:,:,:);
+output_da = channels_r(1:numTrSamples,:,:,:);
+
+input_da_test = Y_sign(numTrSamples+1:end,:,:,:);
+output_da_test = channels_r(numTrSamples+1:end,:,:,:);
+
+
+%% Visualization of Y and H
+figure
+imshow(squeeze(input_da(1,:,:,1)))
+title('Visualization of Y')
+figure
+imshow(squeeze(output_da(1,:,:,1)))
+title('Visualization of H')
 % 
 % %% Save data
 % % save(['Gan_Data/Gan_',num2str(snr),'_dB',filename],'input_da','output_da','input_da_test','output_da_test','-v7.3');

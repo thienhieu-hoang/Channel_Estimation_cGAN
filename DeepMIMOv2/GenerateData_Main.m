@@ -22,13 +22,13 @@ filename = ['Outdoor1_60',num2str(bs_ant),'ant_',num2str(subs),'users_',num2str(
     % Output: 
     %   DeepMIMO_dataset == 1x1 cell == 1 x (no active BSs) cell
     %       DeepMIMO_dataset{1} == 1x1 struct 
-    %           DeepMIMO_dataset{1}.user == 1x2211 cell (total number of UEs = 2211)
+    %           DeepMIMO_dataset{1}.user == 1x noUE cell (total number of UEs = 2211)
     %               each cell: DeepMIMO_dataset{1}.user{1} == 1x1 struct, with attributes: 
-    %                   DeepMIMO_dataset{1}.user{1}.channel == (no UE antens) x (no BS antens) x subcs
+    %                   DeepMIMO_dataset{1}.user{1}.channel == (M_UE antens) x (M_BS antens) x subcs
     %                   DeepMIMO_dataset{1}.user{1}.loc     == 1x3 double
     %   params : add 2 attributes: 
-    %       params.num_BS   (=64)
-    %       params.num_user (=2211)
+    %       params.num_BS   ()
+    %       params.num_user ()
 
 
 
@@ -36,19 +36,19 @@ filename = ['Outdoor1_60',num2str(bs_ant),'ant_',num2str(subs),'users_',num2str(
 %% Generate Pilots 
 pilot = uniformPilotsGen(pilot_l);
 pilot = pilot{1,1};
-pilot_user = repmat(pilot,[1 subs])';
+pilot_user = repmat(pilot,[1 subs])'; % subc x pilot
 
 
 %% Genrate Quantized Siganl Y with Noise
-channels = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,subs);
-Y        = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,pilot_l);
-Y_noise  = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,pilot_l);
-Y_sign   = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,pilot_l,2);
+channels = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,subs);       % noUE x M_BS x subc 
+Y        = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,pilot_l);    % noUE x M_BS x pilot
+Y_noise  = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,pilot_l);    % noUE x M_BS x pilot
+Y_sign   = zeros(length(DeepMIMO_dataset{1}.user),bs_ant,pilot_l,2);  % noUE x M_BS x pilot x 2
 
 for i = 1:length(DeepMIMO_dataset{1}.user)
-    channels(i,:,:) = normalize(DeepMIMO_dataset{1}.user{i}.channel,'scale');%%
-           Y(i,:,:) = squeeze(DeepMIMO_dataset{1}.user{i}.channel) *pilot_user;
-     Y_noise(i,:,:) = awgn(Y(i,:,:),snr,'measured'); 
+    channels(i,:,:) = normalize(DeepMIMO_dataset{1}.user{i}.channel,'scale');   % M_BS x subc
+           Y(i,:,:) = squeeze(DeepMIMO_dataset{1}.user{i}.channel) *pilot_user; % M_BS x subc * subc x pilot == M_BS x pilot
+     Y_noise(i,:,:) = awgn(Y(i,:,:),snr,'measured');                            % M_BS x pilot
 end
 
 
