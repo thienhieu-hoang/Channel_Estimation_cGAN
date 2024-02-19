@@ -12,8 +12,8 @@ params.scene_last = 1;
 params.active_BS = [3];             % Includes the numbers of the active BSs (values from 1-18 for 'O1')(check the scenario description at https://deepmimo.net/scenarios/ for the BS numbers) 
 
 % Active users
-params.active_user_first = 555;       % The first row of the considered user section (check the scenario description for the user row map)
-params.active_user_last  = 555;        % The last row of the considered user section (check the scenario description for the user row map)
+params.active_user_first = 500;       % The first row of the considered user section (check the scenario description for the user row map)
+params.active_user_last  = 560;        % The last row of the considered user section (check the scenario description for the user row map)
 
 % Subsampling of active users
 %--> Setting both subsampling parameters to 1 activate all the users indicated previously
