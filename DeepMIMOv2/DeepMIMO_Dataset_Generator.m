@@ -13,7 +13,7 @@ dataset_params = read_params('parameters.m');
     %       rotation    == 1x3 vector
     %       user        == 1x181 cell 
     %           DeepMIMO_dataset{1}.user{1} == 1x1 struct, with
-    %               channel  == 8x32x64 complex matrix
+    %               channel  == 8x32x64 complex matrix == M_UE x M_BS x subc
     %               rotation == 1x3 vector
     %               loc == 1x3 vector
     %               LoS_status == 1
@@ -31,7 +31,7 @@ dataset_params = read_params('parameters.m');
     %                   LoS_status== real
     %       basestation == 1x1 cell
     %           DeepMIMO_dataset{1}.basestation{1} == 1x1 struct, with
-    %               channel  == 32x32x64 complex matrix
+    %               channel  == 32x32x64 complex matrix == M_BS x M_BS x subc
     %               rotation == 1x3 vector
     %               loc == 1x3 vector
     %               LoS_status == 1
