@@ -24,7 +24,9 @@ layers = tf.keras.layers
 
 
 # data path
-path = "../Data_Generation/Gan_Data/Gan_0_dBIndoor2p4_64ant_32users_8pilot.mat"
+path = "./Data_Generation_v1/Gan_Data/Gan_0_dBIndoor2p4_64ant_32users_8pilot.mat"
+# path = "./DeepMIMOv2/Gan_Data/Gan_0_dBOutdoor1_60_4ant_16subcs_8pilot.mat"
+# path = "./DeepMIMOv2/Gan_Data/Gan_0_dBOutdoor1_60_64ant_16subcs_8pilot.mat"
 
 
 # batch = 1 produces good results on U-NET
@@ -77,7 +79,7 @@ def generator_loss(disc_generated_output, gen_output, target, l2_weight=100):
     gen_loss = tf.nn.sigmoid_cross_entropy_with_logits(
             labels=tf.ones_like(disc_generated_output), logits=disc_generated_output)
     # L2 loss
-    l2_loss = tf.reduce_mean(tf.abs(target - gen_output))
+    l2_loss = tf.reduce_mean(tf.abs(target - gen_output))   # target == gem_output == (H) 1 x M_bs x subc x 2 
     total_gen_loss = tf.reduce_mean(gen_loss) + l2_weight * l2_loss
     return total_gen_loss
 
@@ -108,7 +110,7 @@ def train_step(input_image, target):
         # print("*", gen_output.shape, disc_real_output.shape, disc_generated_output.shape)
 
         # calculate loss
-        gen_loss = generator_loss(disc_generated_output, gen_output, target)   # gen loss
+        gen_loss = generator_loss(disc_generated_output, gen_output, target)   # gen loss == float32      # disc_generated_output == 1x6x2x1   # gen_output==target == 1 x M_bs x subcs x 2
         disc_loss = discriminator_loss(disc_real_output, disc_generated_output)  # disc loss
 
     # gradient
@@ -129,7 +131,7 @@ def train(epochs):
         # train
         for bi, (target, input_image) in enumerate(load_image_train(path)):
             elapsed_time = datetime.datetime.now() - start_time
-            gen_loss, disc_loss = train_step(input_image, target)
+            gen_loss, disc_loss = train_step(input_image, target)  # input_image (Y) == 1 x M_bs x tau x 2;  target (H) == 1 x M_bs x sub x  2, gen_loss disc_loss == float
             print("B/E:", bi, '/' , epoch, ", Generator loss:", gen_loss.numpy(), ", Discriminator loss:", disc_loss.numpy(), ', time:',  elapsed_time)
         # generated and see the progress
         for bii, (tar, inp) in enumerate(load_image_test(path)):            
@@ -154,14 +156,14 @@ def train(epochs):
         
         # Save the predicted Channel 
         matfiledata = {} # make a dictionary to store the MAT data in
-        matfiledata[u'predict_Gan_0_dB_Indoor2p4_64ant_32users_8pilot'] = np.array(prediction) # *** u prefix for variable name = unicode format, no issues thru Python 3.5; advise keeping u prefix indicator format based on feedback despite docs ***
-        hdf5storage.write(matfiledata, '.', 'Results\Eest_cGAN_'+str(epoch + 1)+'_0db_Indoor2p4_64ant_32users_8pilot.mat', matlab_compatible=True)
+        matfiledata[u'predict_Gan_0_dB_Outdoor1_60_4ant_16subcs_8pilot'] = np.array(prediction) # *** u prefix for variable name = unicode format, no issues thru Python 3.5; advise keeping u prefix indicator format based on feedback despite docs ***
+        hdf5storage.write(matfiledata, '.', 'Results\Eest_cGAN_'+str(epoch + 1)+'_0_dB_Outdoor1_60_4ant_16subcs_8pilot.mat', matlab_compatible=True)
         
         plt.figure()
         plt.plot(ep,nm,'^-r')
         plt.xlabel('Epoch')
-        plt.ylabel('NMSE')
-        plt.show();
+        plt.ylabel('NMSE') 
+        plt.show()
     
     return nm, ep
 
@@ -174,5 +176,5 @@ if __name__ == "__main__":
     plt.plot(ep,nm,'^-r')
     plt.xlabel('Epoch')
     plt.ylabel('NMSE')
-    plt.show();
+    plt.show()
 
