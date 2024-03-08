@@ -12,7 +12,7 @@ params.scene_last = 1;
 params.active_BS = [3];             % Includes the numbers of the active BSs (values from 1-18 for 'O1')(check the scenario description at https://deepmimo.net/scenarios/ for the BS numbers) 
 
 % Active users
-params.active_user_first = 500;       % The first row of the considered user section (check the scenario description for the user row map)
+params.active_user_first = 548;       % The first row of the considered user section (check the scenario description for the user row map)
 params.active_user_last  = 560;        % The last row of the considered user section (check the scenario description for the user row map)
 
 % Subsampling of active users
@@ -21,7 +21,7 @@ params.row_subsampling = 1;         % Randomly select round(row_subsampling*(act
 params.user_subsampling = 1;        % Randomly select round(user_subsampling*number_of_users_in_row) users in each row
 
 % Antenna array dimensions
-params.num_ant_BS = [1, 64, 1];      % Number of antenna elements for the BS arrays in the x,y,z-axes
+params.num_ant_BS = [1, 4, 1];      % Number of antenna elements for the BS arrays in the x,y,z-axes
 % By defauly, all BSs will have the same array sizes
 % To define different array sizes for the selected active BSs, you can add multiple rows. 
 % Example: For two active BSs with a 8x4 y-z UPA in the first BS and 4x4
@@ -72,4 +72,4 @@ params.num_OFDM = 16; % 512;               % Number of OFDM subcarriers
 params.OFDM_sampling_factor = 1;      % The constructed channels will be calculated only at the sampled subcarriers (to reduce the size of the dataset)
 params.OFDM_limit = 16;               % Only the first params.OFDM_limit subcarriers will be considered  
 
-params.saveDataset = 1;               % 0: Will return the dataset without saving it (highly recommended!) 
+params.saveDataset =0;               % 0: Will return the dataset without saving it (highly recommended!) 

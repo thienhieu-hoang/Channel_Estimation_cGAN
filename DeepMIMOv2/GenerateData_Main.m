@@ -88,7 +88,7 @@ imshow(squeeze(output_da(1,:,:,1)))
 title('Visualization of H')
 
 %% Save data
-save(['Gan_Data/Gan_',num2str(snr),'_dB',filename],'input_da','output_da','input_da_test','output_da_test', "dataset_params",'-v7.3');
+save(['Gan_Data/4ant_16sub_548_560/Gan_',num2str(snr),'_dB',filename],'input_da','output_da','input_da_test','output_da_test', "dataset_params",'-v7.3');
 
 
 
