@@ -9,7 +9,7 @@ dataset_params = read_params('parameters.m');
 %% Settings 
 bs_ant = dataset_params.num_ant_BS(1) * dataset_params.num_ant_BS(2) *dataset_params.num_ant_BS(3); % M = 1x4x1 BS Antennas
 subs = dataset_params.OFDM_limit; % subcarriers
-pilot_l = 8; % Pilots length is 8
+pilot_l = 16; % 8; % Pilots length is 8
 snr  = 0; % SNR = 0 dB
 
 filename = ['Outdoor1_60_',num2str(bs_ant),'ant_',num2str(subs),'subcs_',num2str(pilot_l),'pilot'];
@@ -88,7 +88,7 @@ imshow(squeeze(output_da(1,:,:,1)))
 title('Visualization of H')
 
 %% Save data
-save(['Gan_Data/4ant_16sub_548_560/Gan_',num2str(snr),'_dB',filename],'input_da','output_da','input_da_test','output_da_test', "dataset_params",'-v7.3');
+save(['Gan_Data/64ant_32sub_16pilot_548_560/Gan_',num2str(snr),'_dB',filename],'input_da','output_da','input_da_test','output_da_test', "dataset_params",'-v7.3');
 
 
 

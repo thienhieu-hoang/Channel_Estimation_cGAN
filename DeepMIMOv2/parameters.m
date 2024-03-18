@@ -21,7 +21,7 @@ params.row_subsampling = 1;         % Randomly select round(row_subsampling*(act
 params.user_subsampling = 1;        % Randomly select round(user_subsampling*number_of_users_in_row) users in each row
 
 % Antenna array dimensions
-params.num_ant_BS = [1, 4, 1];      % Number of antenna elements for the BS arrays in the x,y,z-axes
+params.num_ant_BS = [1, 64, 1];      % Number of antenna elements for the BS arrays in the x,y,z-axes
 % By defauly, all BSs will have the same array sizes
 % To define different array sizes for the selected active BSs, you can add multiple rows. 
 % Example: For two active BSs with a 8x4 y-z UPA in the first BS and 4x4
@@ -68,8 +68,8 @@ params.generate_OFDM_channels = 1;    % 1: activate frequency domain (FD) channe
 params.num_paths = 4;                 % Maximum number of paths to be considered (a value between 1 and 25), e.g., choose 1 if you are only interested in the strongest path
 
 % OFDM parameters
-params.num_OFDM = 16; % 512;               % Number of OFDM subcarriers
+params.num_OFDM = 32; % 512;               % Number of OFDM subcarriers
 params.OFDM_sampling_factor = 1;      % The constructed channels will be calculated only at the sampled subcarriers (to reduce the size of the dataset)
-params.OFDM_limit = 16;               % Only the first params.OFDM_limit subcarriers will be considered  
+params.OFDM_limit = 32;               % Only the first params.OFDM_limit subcarriers will be considered  
 
 params.saveDataset =0;               % 0: Will return the dataset without saving it (highly recommended!) 
