@@ -7,7 +7,7 @@
 
 % Output:
 %   channel == M_Rx x M_Tx x subcs  complex
-function [channel]=construct_DeepMIMO_channel_freq_time(tx_ant_size, tx_rotation, tx_ant_spacing, rx_ant_size, rx_rotation, rx_ant_spacing, params_user, params)
+function [channel]=construct_DeepMIMO_channel(tx_ant_size, tx_rotation, tx_ant_spacing, rx_ant_size, rx_rotation, rx_ant_spacing, params_user, params)
 
 BW = params.bandwidth*1e9;
 ang_conv=pi/180;
