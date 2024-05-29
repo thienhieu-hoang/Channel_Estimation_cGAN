@@ -7,7 +7,8 @@
 
 % Output:
 %   channel == M_Rx x M_Tx x subcs  complex
-function [channel]=construct_DeepMIMO_channel_freq_time(tx_ant_size, tx_rotation, tx_ant_spacing, rx_ant_size, rx_rotation, rx_ant_spacing, params_user, params)
+%              M_UE x M_BS x subcs
+function [channel]=construct_DeepMIMO_channel(tx_ant_size, tx_rotation, tx_ant_spacing, rx_ant_size, rx_rotation, rx_ant_spacing, params_user, params)
 
 BW = params.bandwidth*1e9;
 ang_conv=pi/180;
@@ -70,8 +71,11 @@ delay_normalized(delay_normalized>=params.num_OFDM) = params.num_OFDM;
 if ~params.activate_RX_filter
     path_const=sqrt(power/params.num_OFDM).*exp(1j*params_user.phase*ang_conv).*exp(-1j*2*pi*(k/params.num_OFDM)*delay_normalized);
              % 1 x M_BS                   .* 1 x M_BS                         .* exp( subcs x 1  * 1 x M_BS) 
+             % == subcs x M_BS
 
     channel = sum(reshape(array_response_RX, M_RX, 1, 1, []) .* reshape(array_response_TX, 1, M_TX, 1, []) .* reshape(path_const, 1, 1, num_sampled_subcarriers, []), 4);
+            % channel == M_Rx x M_Tx x subcs  complex
+                       % M_UE x M_BS x subcs
 else
 
     d_ext = [0:(params.num_OFDM-1)]; %extended d domain

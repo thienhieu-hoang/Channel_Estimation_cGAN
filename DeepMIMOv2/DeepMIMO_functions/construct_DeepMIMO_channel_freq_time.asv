@@ -75,16 +75,14 @@ if ~params.activate_RX_filter
         % % Account only for the channel within the useful OFDM symbol duration
         % delay_normalized = (params_user.ToA + (ofdm_sym_idx-1)* params.OFDM.T_symbol)/Ts;
         %                         % [second] 
-        
-        delay_normalized = (params_user.ToA)/Ts;
+
         % Doppler Effect
-        Doppler_effect = exp(- 1j * 2*pi* params.maximumDopplerShift * (ofdm_sym_idx-1) *params.OFDM.T_symbol) ;
+        Doppler_effect = exp(- 1j * 2*pi* par) ;
         
         % power(delay_normalized >= params.num_OFDM) = 0;
         % delay_normalized(delay_normalized>=params.num_OFDM) = params.num_OFDM;
         
-        % path_const=sqrt(power/params.num_OFDM).*exp(1j*params_user.phase*ang_conv).*exp(-1j*2*pi*(k/params.num_OFDM)*delay_normalized);
-        path_const=sqrt(power/params.num_OFDM).*exp(1j*params_user.phase*ang_conv).*exp(-1j*2*pi*(k/params.num_OFDM)*delay_normalized) * Doppler_effect;
+        path_const=sqrt(power/params.num_OFDM).*exp(1j*params_user.phase*ang_conv).*exp(-1j*2*pi*(k/params.num_OFDM)*delay_normalized);
                  %      1 x no_paths          .*            1 x no_paths         .* exp(         subcs x 1          * 1 x no_paths) 
                  %      subc x no_paths (no_paths = L)
         channel_temp = sum(reshape(array_response_RX, M_RX, 1, 1, []) .* reshape(array_response_TX, 1, M_TX, 1, []) .* reshape(path_const, 1, 1, num_sampled_subcarriers, []), 4);

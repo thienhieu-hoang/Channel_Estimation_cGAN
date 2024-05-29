@@ -3,7 +3,9 @@ Data_Generation_v1/Gan_Data
 Data_Generation_v1/DeepMIMO Dataset
 DeepMIMOv2/Raytracing_scenarios
 DeepMIMOv2/Gan_Data
+DeepMIMOv2/freq_time_test
 DeepMIMOv2/DeepMIMO_dataset
 cGAN_python/generated_img
 cGAN_python/logs
 cGAN_python/VAE MNIST
+cGAN_python/saved_model
