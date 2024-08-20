@@ -75,6 +75,8 @@ function DeepMIMO_dataset = generate_data(params, params_inner)
                 [DeepMIMO_dataset{t}.user{user}.channel] = construct_DeepMIMO_channel_freq_time(params_inner.num_ant_BS(t, :), params_inner.array_rotation_BS(t,:), params_inner.ant_spacing_BS(t), params.num_ant_UE, params_inner.array_rotation_UE(user, :), params.ant_spacing_UE, TX{t}.channel_params(user), params);
                         % 1 x M_BS cell
                         %       each cell == subcs x 14 matrix == 612 x 14
+                [test_] =        construct_DeepMIMO_channel_TD(params_inner.num_ant_BS(t, :), params_inner.array_rotation_BS(t,:), params_inner.ant_spacing_BS(t), params.num_ant_UE, params_inner.array_rotation_UE(user, :), params.ant_spacing_UE, TX{t}.channel_params(user), params);
+                % then check if test is ifft of DeepMIMO_dataset{t}.user{user}.channel
             else
                 [DeepMIMO_dataset{t}.user{user}.channel]=construct_DeepMIMO_channel_TD(params_inner.num_ant_BS(t, :), params_inner.array_rotation_BS(t,:), params_inner.ant_spacing_BS(t), params.num_ant_UE, params_inner.array_rotation_UE(user, :), params.ant_spacing_UE, TX{t}.channel_params(user), params);
                 DeepMIMO_dataset{t}.user{user}.ToA = TX{t}.channel_params(user).ToA; %Time of Arrival/Flight of each channel path (seconds)

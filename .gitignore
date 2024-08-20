@@ -9,3 +9,4 @@ cGAN_python/generated_img
 cGAN_python/logs
 cGAN_python/VAE MNIST
 cGAN_python/saved_model
+run_test_results

@@ -62,7 +62,7 @@ gamma_RX=+1j*kd_RX*[sind(DoA_theta).*cosd(DoA_phi);
 array_response_RX = exp(M_RX_ind*gamma_RX); % == M_RX x L
 
 % Account only for the channel within the useful OFDM symbol duration
-delay_normalized=params_user.ToA/Ts;
+delay_normalized=params_user.ToA/Ts;  % 1 x L
 
 power(delay_normalized >= params.num_OFDM) = 0;
 delay_normalized(delay_normalized>=params.num_OFDM) = params.num_OFDM;
@@ -74,6 +74,7 @@ if ~params.activate_RX_filter
              % == subcs x M_BS
 
     channel = sum(reshape(array_response_RX, M_RX, 1, 1, []) .* reshape(array_response_TX, 1, M_TX, 1, []) .* reshape(path_const, 1, 1, num_sampled_subcarriers, []), 4);
+            %   sum(M_Rx x M_Tx x subcs x L, 4)
             % channel == M_Rx x M_Tx x subcs  complex
                        % M_UE x M_BS x subcs
 else

@@ -5,6 +5,7 @@ addpath('DeepMIMO_functions')
 % -------------------- DeepMIMO Dataset Generation -----------------------%
 % Load Dataset Parameters
 dataset_params = read_params('parameters_freq_time.m');
+dataset_params.staticChan = 1; % set to 1 to generate 612x14 channel grid, all 14 channels of 14 OFDM symbols are the same
 % run parameters.m
 
 %% Settings 
@@ -13,7 +14,7 @@ subs = dataset_params.OFDM_limit; % subcarriers
 pilot_l = 16; % 8; % Pilots length is 8
 snr  = 0; % SNR = 0 dB
 
-filename = ['Outdoor1_60_',num2str(bs_ant),'ant_',num2str(subs),'subcs'];
+filename = ['Outdoor1_60_',num2str(bs_ant),'ant_',num2str(subs),'subcs_Row_', num2str(dataset_params.active_user_first),'_', num2str(dataset_params.active_user_last)];
 
 %% Generate channel dataset H                            
 % dataset_params.saveDataset = 1;
@@ -80,28 +81,44 @@ pilot_tx(pilot_Indices) = pilot_Symbols; % == subc x sym == 612 x 14
 
 
 %% Genrate Quantized Siganl Y with Noise
-channels = zeros(subs, dataset_params.OFDM.num_symbol, length(DeepMIMO_dataset{1}.user), bs_ant); % subc x symbol x noUE x M_BS 
-Y        = zeros(subs, dataset_params.OFDM.num_symbol, length(DeepMIMO_dataset{1}.user), bs_ant); % subc x symbol x noUE x M_BS 
-Y_noise  = zeros(subs, dataset_params.OFDM.num_symbol, length(DeepMIMO_dataset{1}.user), bs_ant); % subc x symbol x noUE x M_BS 
-H_equalized = zeros(subs, dataset_params.OFDM.num_symbol, length(DeepMIMO_dataset{1}.user), bs_ant); % subc x symbol x noUE x M_BS 
-H_linear = zeros(subs, dataset_params.OFDM.num_symbol, length(DeepMIMO_dataset{1}.user), bs_ant); % subc x symbol x noUE x M_BS 
+% channels = zeros(subs, dataset_params.OFDM.num_symbol, length(DeepMIMO_dataset{1}.user), bs_ant); % subc x symbol x noUE x M_BS 
+% Y        = zeros(subs, dataset_params.OFDM.num_symbol, length(DeepMIMO_dataset{1}.user), bs_ant); % subc x symbol x noUE x M_BS 
+% Y_noise  = zeros(subs, dataset_params.OFDM.num_symbol, length(DeepMIMO_dataset{1}.user), bs_ant); % subc x symbol x noUE x M_BS 
+% H_equalized = zeros(subs, dataset_params.OFDM.num_symbol, length(DeepMIMO_dataset{1}.user), bs_ant); % subc x symbol x noUE x M_BS 
+% H_linear = zeros(subs, dataset_params.OFDM.num_symbol, length(DeepMIMO_dataset{1}.user), bs_ant); % subc x symbol x noUE x M_BS 
+% H_practical = zeros(subs, dataset_params.OFDM.num_symbol, length(DeepMIMO_dataset{1}.user), bs_ant); % subc x symbol x noUE x M_BS 
+channels    = [];
+Y           = [];
+Y_noise     = [];
+H_equalized = [];
+H_linear    = [];
+H_practical = [];
 
 
 % 1-bit ADC
 % Y_sign   = zeros(subs, dataset_params.OFDM.num_symbol, length(DeepMIMO_dataset{1}.user), bs_ant);  % noUE x M_BS x pilot x 2
 
+idx = 0; 
 for i = 1:length(DeepMIMO_dataset{1}.user)
-    for anten_bs = 1: bs_ant
-        temp_H_equalized = zeros(subs, dataset_params.OFDM.num_symbol);
+    if iscell(DeepMIMO_dataset{1}.user{i}.channel) % not cell: that user doesnt have channel
+        idx = idx +1; 
+        for anten_bs = 1: bs_ant
+            temp_H_equalized = zeros(subs, dataset_params.OFDM.num_symbol);
+    
+            %-- channels(:,:,i,anten_bs) = normalize(DeepMIMO_dataset{1}.user{i}.channel{anten_bs},'scale');    % subc x symbol           
+            channels(:,:,idx,anten_bs) = DeepMIMO_dataset{1}.user{i}.channel{anten_bs};    % subc x symbol
 
-        % channels(:,:,i,anten_bs) = normalize(DeepMIMO_dataset{1}.user{i}.channel{anten_bs},'scale');    % subc x symbol
-        channels(:,:,i,anten_bs) = DeepMIMO_dataset{1}.user{i}.channel{anten_bs};    % subc x symbol
-               
-        Y(:,:,i,anten_bs)        = DeepMIMO_dataset{1}.user{i}.channel{anten_bs} .* pilot_tx;           % subc x symbol
-        Y_noise(:,:,i,anten_bs)  = awgn(Y(:,:,i,anten_bs),snr,'measured');                                       % subc x symbol
-                                    % is it correct to add noise in freq domain?
-        
-        [H_equalized(:,:,i,anten_bs), H_linear(:,:,i,anten_bs)] = Lin_Interpolate(Y_noise(:,:,i,anten_bs), pilot_Indices, pilot_Symbols); 
+            Y(:,:,idx,anten_bs)        = DeepMIMO_dataset{1}.user{i}.channel{anten_bs} .* pilot_tx;           % subc x symbol
+            Y_noise(:,:,idx,anten_bs)  = awgn(Y(:,:,idx,anten_bs),snr,'measured');                                       % subc x symbol
+                                        % is it correct to add noise in freq domain?
+
+            [H_equalized(:,:,idx,anten_bs), H_linear(:,:,idx,anten_bs)] = Lin_Interpolate(Y_noise(:,:,idx,anten_bs), pilot_Indices, pilot_Symbols); 
+
+            H_practical(:,:,idx,anten_bs) = nrChannelEstimate(Y_noise(:,:,idx,anten_bs), pilot_Indices, pilot_Symbols);
+            
+
+            %append just non zeros H
+        end
     end
 end
 
@@ -113,11 +130,15 @@ H_equalized_data(:,:,:,:,2) = imag(H_equalized);
 H_linear_data(:,:,:,:,1) = real(H_linear);
 H_linear_data(:,:,:,:,2) = imag(H_linear);
 
+H_practical_data(:,:,:,:,1) = real(H_practical);
+H_practical_data(:,:,:,:,2) = imag(H_practical);
+
 Y_data(:,:,:,:,1) = real(Y_noise); % subc x symbol x noUE x M_BS
 Y_data(:,:,:,:,2) = imag(Y_noise); % subc x symbol x noUE x M_BS
 % use complex(A,B) to return
 %  x M_BS
 
+% true channel data
 H_data(:,:,:,:,1) = real(channels);
 H_data(:,:,:,:,2) = imag(channels);
 % M_BS x subcs
@@ -132,36 +153,42 @@ H_data(:,:,:,:,2) = imag(channels);
 % channels_r(:,:,:,2) = imag(channels); % imag part of H
 
 % Shuffle data 
-shuff            = randi([1,length(DeepMIMO_dataset{1}.user)],length(DeepMIMO_dataset{1}.user),1);  % random, not permute
+shuff            = randi([1,size(channels,3)], size(channels,3), 1);  % random, not permute
 
 H_equalized_data = H_equalized_data(:,:,shuff,:,:);
 H_linear_data    = H_linear_data(:,:,shuff,:,:);
+H_practical_data = H_practical_data(:,:,shuff,:,:);
 Y_data           = Y_data(:,:,shuff,:,:);
 H_data           = H_data(:,:,shuff,:,:); % subc x symbol x noUE x M_BS x 2
 
-Y_data           = permute(Y_data, [2,1,5,3,4]);
 H_equalized_data = permute(H_equalized_data, [2,1,5,3,4]);
 H_linear_data    = permute(H_linear_data, [2,1,5,3,4]);
+H_practical_data = permute(H_practical_data, [2,1,5,3,4]);
+Y_data           = permute(Y_data, [2,1,5,3,4]);
 H_data           = permute(H_data, [2,1,5,3,4]);
     % subc x symb x 2 x samples x 1 (BS_ant) 
     % to get size in python
     % samples (noUE) x 2 x symb x subc
 
 %% Split data for training
-numOfSamples = length(DeepMIMO_dataset{1}.user);
-trRatio = 0.7; % training Ratio
-numTrSamples = floor( trRatio*numOfSamples);
-numValSamples = numOfSamples - numTrSamples;
+% - Don't need this anymore
+% numOfSamples = length(DeepMIMO_dataset{1}.user);
+% trRatio = 0.7; % training Ratio
+% numTrSamples = floor( trRatio*numOfSamples);
+% numValSamples = numOfSamples - numTrSamples;
+% 
+% H_equal  = H_equalized_data(:,:,:,1:numTrSamples,:);
+% H_linear = H_linear_data(:,:,:,1:numTrSamples,:);
+% H_prac   = H_practical(:,:,:,1:numTrSamples,:);
+% Y_       = Y_data(:,:,:,1:numTrSamples,:);
+% H_       = H_data(:,:,:,1:numTrSamples,:);
+% 
+% H_equal_test  = H_equalized_data(:,:,:,numTrSamples+1:end,:);
+% H_linear_test = H_linear_data(:,:,:,numTrSamples+1:end,:);
+% H_prac_test   = H_practical(:,:,:,numTrSamples+1:end,:);
+% Y_test        = Y_data(:,:,:,numTrSamples+1:end,:);
+% H_test        = H_data(:,:,:,numTrSamples+1:end,:);
 
-Y_       = Y_data(:,:,:,1:numTrSamples,:);
-H_equal  = H_equalized_data(:,:,:,1:numTrSamples,:);
-H_linear = H_linear_data(:,:,:,1:numTrSamples,:);
-H_       = H_data(:,:,:,1:numTrSamples,:);
-
-Y_test        = Y_data(:,:,:,numTrSamples+1:end,:);
-H_equal_test  = H_equalized_data(:,:,:,numTrSamples+1:end,:);
-H_linear_test = H_linear_data(:,:,:,numTrSamples+1:end,:);
-H_test        = H_data(:,:,:,numTrSamples+1:end,:);
 
 
 %% Visualization of Y and H
@@ -174,10 +201,14 @@ H_test        = H_data(:,:,:,numTrSamples+1:end,:);
 
 %% Save data
 % save(['Gan_Data/Doppler_shift/freq_symb_',num2str(bs_ant),'ant_',num2str(subs),'sub/new3_Gan_',num2str(snr),'_dB',filename],'Y_','H_','H_equal','H_linear','Y_test','H_test', 'H_equal_test', 'H_linear_test',"dataset_params",'-v7.3');
-save(['Gan_Data/Doppler_shift/freq_symb_',num2str(bs_ant),'ant_',num2str(subs),'sub/new4_Gan_',num2str(snr),'_dB',filename],'H_data', 'H_linear_data', 'H_equalized_data', 'Y_data',"dataset_params",'-v7.3');
+% save(['Gan_Data/Doppler_shift/freq_symb_',num2str(bs_ant),'ant_',num2str(subs),'sub/new4_Gan_',num2str(snr),'_dB',filename],'H_data', 'H_linear_data', 'H_equalized_data', 'Y_data',"dataset_params",'-v7.3');
 
-% 
+if dataset_params.staticChan == 1
+    % H_mean_data(:,:,1,1) = repmat(mean(H_linear_data(:,:,1,1),1),dataset_params.OFDM.num_symbol); %  take the 1x612 mean vector from 14x612, then replicate 14 times
+    save(['Gan_Data/Static_612x14/freq_symb_',num2str(bs_ant),'ant_',num2str(subs),'sub/Gan_',num2str(snr),'_dB',filename],'H_data', 'H_linear_data', 'H_equalized_data', 'Y_data', 'H_practical_data',"dataset_params",'-v7.3');
+end
 
+% helper function
 function [H_equalized, H_linear] = Lin_Interpolate(Y_noise, pilot_Indices, pilot_Symbols)
 % Perform linear interpolation of the grid and input the result to the
 % neural network This helper function extracts the DM-RS symbols from
