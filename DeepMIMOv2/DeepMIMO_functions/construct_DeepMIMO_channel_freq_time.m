@@ -70,21 +70,14 @@ channel = cell(1,M_TX);
 
 %Assuming the pulse shaping as a dirac delta function and no receive LPF
 if ~params.activate_RX_filter
+    % % Account only for the channel within the useful OFDM symbol duration
+    % delay_normalized = (params_user.ToA + (ofdm_sym_idx-1)* params.OFDM.T_symbol)/Ts;
+    %                         % [second] 
     
-    for ofdm_sym_idx = 1:(params.OFDM.num_symbol) % 1:14
-        % % Account only for the channel within the useful OFDM symbol duration
-        % delay_normalized = (params_user.ToA + (ofdm_sym_idx-1)* params.OFDM.T_symbol)/Ts;
-        %                         % [second] 
-        
-        delay_normalized = (params_user.ToA)/Ts;
-        % Doppler Effect
-        Doppler_effect = exp(- 1j * 2*pi* params.maximumDopplerShift * (ofdm_sym_idx-1) *params.OFDM.T_symbol) ;
-        
-        % power(delay_normalized >= params.num_OFDM) = 0;
-        % delay_normalized(delay_normalized>=params.num_OFDM) = params.num_OFDM;
-        
+    delay_normalized = (params_user.ToA)/Ts;
+    if params.staticChan == 1
         % path_const=sqrt(power/params.num_OFDM).*exp(1j*params_user.phase*ang_conv).*exp(-1j*2*pi*(k/params.num_OFDM)*delay_normalized);
-        path_const=sqrt(power/params.num_OFDM).*exp(1j*params_user.phase*ang_conv).*exp(-1j*2*pi*(k/params.num_OFDM)*delay_normalized) * Doppler_effect;
+        path_const=sqrt(power/params.num_OFDM).*exp(1j*params_user.phase*ang_conv).*exp(-1j*2*pi*(k/params.num_OFDM)*delay_normalized);
                  %      1 x no_paths          .*            1 x no_paths         .* exp(         subcs x 1          * 1 x no_paths) 
                  %      subc x no_paths (no_paths = L)
         channel_temp = sum(reshape(array_response_RX, M_RX, 1, 1, []) .* reshape(array_response_TX, 1, M_TX, 1, []) .* reshape(path_const, 1, 1, num_sampled_subcarriers, []), 4);
@@ -98,21 +91,39 @@ if ~params.activate_RX_filter
                            % subc x M_BS x 1
 
         for m_bs = 1:M_TX 
-            channel{m_bs}(:, ofdm_sym_idx) = channel_temp_1(:, m_bs);
+            channel{m_bs} = repmat(channel_temp_1(:, m_bs), 1, params.OFDM.num_symbol); % 612 x 14
+        end
+    else
+        for ofdm_sym_idx = 1:(params.OFDM.num_symbol) % 1:14
+
+            % Doppler Effect
+            f_D = params.maximumDopplerShift * rand(1, params_user.num_paths);
+                % 1 x L
+            Doppler_effect = exp( 1j * pi* f_D * params.OFDM.T_symbol) .* sin(pi * f_D * params.OFDM.T_symbol) ./ (pi * f_D.* params.OFDM.T_symbol) ;
+                % 1 x L 
+
+            % power(delay_normalized >= params.num_OFDM) = 0;
+            % delay_normalized(delay_normalized>=params.num_OFDM) = params.num_OFDM;
+            
+            % path_const=sqrt(power/params.num_OFDM).*exp(1j*params_user.phase*ang_conv).*exp(-1j*2*pi*(k/params.num_OFDM)*delay_normalized);
+            path_const=sqrt(power/params.num_OFDM).*exp(1j*params_user.phase*ang_conv).*exp(-1j*2*pi*(k/params.num_OFDM)*delay_normalized) .* Doppler_effect;
+                     %      1 x no_paths          .*            1 x no_paths         .* exp(         subcs x 1          * 1 x no_paths) 
+                     %      subc x no_paths (no_paths = L)
+            channel_temp = sum(reshape(array_response_RX, M_RX, 1, 1, []) .* reshape(array_response_TX, 1, M_TX, 1, []) .* reshape(path_const, 1, 1, num_sampled_subcarriers, []), 4);
+                     %     sum( M_UE x 1 x 1 x L                          .*  1 x M_BS x 1 x L                          .* 1 x 1 x subcs x L                                     , 4) 
+                     %     sum( M_UE x M_BS x subcs x L, 4)
+                     %     M_UE x M_BS x subcs
+            % channel_temp == M_Rx x M_Tx x subcs  complex
+                               % M_UE x M_BS x subcs
+                               %    1 x M_BS x subcs
+            channel_temp_1 = permute(channel_temp, [3,2,1]); 
+                               % subc x M_BS x 1
+    
+            for m_bs = 1:M_TX 
+                channel{m_bs}(:, ofdm_sym_idx) = channel_temp_1(:, m_bs);
+            end
         end
     end
-
-% else
-% 
-%     d_ext = [0:(params.num_OFDM-1)]; % extended d domain
-%     delay_d_conv = exp(-1j*(2*pi.*k/params.num_OFDM).*d_ext);
-% 
-%     % Generate the pulse function
-%     LP_fn = pulse_sinc(d_ext.'-delay_normalized);
-%     conv_vec = exp(1j*params_user.phase*ang_conv).*sqrt(power/params.num_OFDM) .* LP_fn; %Power of the paths and phase
-% 
-%     channel = sum(reshape(array_response_RX, M_RX, 1, 1, []) .* reshape(array_response_TX, 1, M_TX, 1, []) .* reshape(conv_vec, 1, 1, [], params_user.num_paths), 4);
-%     channel = sum(reshape(channel, M_RX, M_TX, 1, []) .* reshape(delay_d_conv, 1, 1, num_sampled_subcarriers, []), 4);
 end
 
 end

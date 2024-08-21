@@ -72,4 +72,6 @@ params.num_OFDM = 32; % 512;               % Number of OFDM subcarriers
 params.OFDM_sampling_factor = 1;      % The constructed channels will be calculated only at the sampled subcarriers (to reduce the size of the dataset)
 params.OFDM_limit = 32;               % Only the first params.OFDM_limit subcarriers will be considered  
 
+params.staticChan = 0;  % set =1 to generate 612x14 channel grid, all 14 channels of 14 OFDM symbols are the same
+
 params.saveDataset =0;               % 0: Will return the dataset without saving it (highly recommended!) 
