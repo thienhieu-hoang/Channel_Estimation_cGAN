@@ -115,15 +115,23 @@ def load_model(params):
     return [generator_li, discriminator_li], [generator_ls, discriminator_ls], [gen_li_loss_track, disc_li_loss_track, gen_li_val_loss_track], [gen_ls_loss_track, disc_ls_loss_track, gen_ls_val_loss_track]
 
 # save to .mat file
-def find_incremental_filename(directory, base_name):
+def find_incremental_filename(directory, prefix_name, postfix_name, extension='.mat'):
     # List all files in the directory
     files = os.listdir(directory)
     
-    # Filter out files that match the base name and have a '.mat' extension
-    existing_files = [f for f in files if f.startswith(base_name) and f.endswith('.mat')]
+    # Filter out files that match the pattern prefix_name + number + postfix_name + extension
+    existing_files = [f for f in files if f.startswith(prefix_name) and f.endswith(postfix_name + extension)]
     
     # Extract the numbers from the filenames
-    numbers = [int(f[len(base_name):-4]) for f in existing_files if f[len(base_name):-4].isdigit()]
+    numbers = []
+    for f in existing_files:
+        # Strip the prefix and postfix, then extract the number in between
+        try:
+            number_part = f[len(prefix_name):-len(postfix_name + extension)]
+            if number_part.isdigit():
+                numbers.append(int(number_part))
+        except ValueError:
+            pass  # Skip any files that don't match the expected pattern
     
     # Determine the next number
     if numbers:
